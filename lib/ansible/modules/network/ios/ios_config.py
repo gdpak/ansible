@@ -64,6 +64,16 @@ options:
     required: false
     default: null
     version_added: "2.2"
+  src_json:
+    description:
+      - Specifies the source path to the file that contains the configuration
+        or configuration template to load.  The path to the source file can
+        either be the full path on the Ansible control host or a relative
+        path from the playbook or role root directory.  This argument is mutually
+        exclusive with I(lines), I(parents).
+    required: false
+    default: null
+    version_added: "2.6"
   before:
     description:
       - The ordered set of commands to push on to the command stack if
@@ -284,6 +294,7 @@ backup_path:
 """
 import re
 import time
+import q
 
 from ansible.module_utils.network.ios.ios import run_commands, get_config, load_config
 from ansible.module_utils.network.ios.ios import get_defaults_flag
@@ -305,6 +316,7 @@ def check_args(module, warnings):
 
 def extract_banners(config):
     banners = {}
+    q(config)
     banner_cmds = re.findall(r'^banner (\w+)', config, re.M)
     for cmd in banner_cmds:
         regex = r'banner %s \^C(.+?)(?=\^C)' % cmd
@@ -321,6 +333,10 @@ def extract_banners(config):
 
     config = re.sub(r'banner \w+ \^C\^C', '!! banner removed', config)
     return (config, banners)
+
+def extract_ios_native_config_from_json(config):
+    q (config)
+    return (0, 0)
 
 
 def diff_banners(want, have):
@@ -362,6 +378,12 @@ def get_candidate(module):
         src, banners = extract_banners(module.params['src'])
         candidate.load(src)
 
+    elif module.params['src_json']:
+        src, banners =           \
+        extract_ios_native_config_from_json(module.params['src_json'])
+        return
+        candidate.load(src)
+
     elif module.params['lines']:
         parents = module.params['parents'] or list()
         candidate.add(module.params['lines'], parents=parents)
@@ -384,6 +406,7 @@ def main():
     """
     argument_spec = dict(
         src=dict(type='path'),
+        src_json=dict(type='path'),
 
         lines=dict(aliases=['commands'], type='list'),
         parents=dict(type='list'),
@@ -412,7 +435,7 @@ def main():
         # force argument deprecated in ans2.2
         force=dict(default=False, type='bool', removed_in_version='2.7')
     )
-
+    
     argument_spec.update(ios_argument_spec)
 
     mutually_exclusive = [('lines', 'src'),
@@ -429,6 +452,12 @@ def main():
                            required_if=required_if,
                            supports_check_mode=True)
 
+    if module.params['src']:
+        q (module.params['src'])
+
+    if module.params['src_json']:
+        q (module.params['src_json'])
+
     result = {'changed': False}
 
     warnings = list()
@@ -443,7 +472,8 @@ def main():
         if module.params['backup']:
             result['__backup__'] = contents
 
-    if any((module.params['lines'], module.params['src'])):
+    if any((module.params['lines'], module.params['src'],
+        module.params['src_json'])):
         match = module.params['match']
         replace = module.params['replace']
         path = module.params['parents']
