@@ -209,7 +209,9 @@ def sanitize_config(config, result):
         for index, line in enumerate(list(config)):
             if regex.search(line):
                 result['filtered'].append(line)
-                del config[index]
+        # del filtred configs
+        for index, _ in enumerate(result['filtered']):
+            del config[index]
 
 
 def run(module, result):
