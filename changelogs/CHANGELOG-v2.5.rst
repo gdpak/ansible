@@ -2,6 +2,76 @@
 Ansible 2.5 "Kashmir" Release Notes
 ===================================
 
+.. _Ansible 2.5 "Kashmir" Release Notes_v2.5.8:
+
+v2.5.8
+======
+
+.. _Ansible 2.5 "Kashmir" Release Notes_v2.5.8_Release Summary:
+
+Release Summary
+---------------
+
+| Release Date: 2018-08-16
+| `Porting Guide <https://docs.ansible.com/ansible/devel/porting_guides.html>`_
+
+
+.. _Ansible 2.5 "Kashmir" Release Notes_v2.5.8_Bugfixes:
+
+Bugfixes
+--------
+
+- fix for the bundled selectors module (used in the ssh and local connection plugins) when a syscall is restarted after being interrupted by a signal (https://github.com/ansible/ansible/issues/41630)
+
+- Fix the mount module's handling of swap entries in fstab (https://github.com/ansible/ansible/pull/42837)
+
+- The fix for `CVE-2018-10875 <https://access.redhat.com/security/cve/cve-2018-10875>`_ prints out a warning message about skipping a config file from a world writable current working directory.  However, if the user explicitly specifies that the config file should be used via the ANSIBLE_CONFIG environment variable then Ansible would honor that but still print out the warning message.  This has been fixed so that Ansible honors the user's explicit wishes and does not print a warning message in that circumstance.
+
+- fact names that conflict with well-known connection vars are now filtered (https://github.com/ansible/ansible/issues/41684)
+
+- get_url - fix the bug that get_url does not change mode when checksum matches (https://github.com/ansible/ansible/issues/29614)
+
+- openvswitch_db - make 'key' argument optional https://github.com/ansible/ansible/issues/42108
+
+- slack callback - Fix invocation by looking up data from cli.options (https://github.com/ansible/ansible/pull/43542)
+
+- vars_prompt - properly template play level variables in vars_prompt (https://github.com/ansible/ansible/issues/37984)
+
+
+.. _Ansible 2.5 "Kashmir" Release Notes_v2.5.7:
+
+v2.5.7
+======
+
+.. _Ansible 2.5 "Kashmir" Release Notes_v2.5.7_Release Summary:
+
+Release Summary
+---------------
+
+| Release Date: 2018-07-26
+| `Porting Guide <https://docs.ansible.com/ansible/devel/porting_guides.html>`_
+
+
+.. _Ansible 2.5 "Kashmir" Release Notes_v2.5.7_Bugfixes:
+
+Bugfixes
+--------
+
+- eos_facts - fix failure when lldp will be disabled (https://github.com/ansible/ansible/pull/42347)
+
+- ios_vlan - fix unable to identify correct vlan issue (https://github.com/ansible/ansible/pull/42247)
+
+- ios_linkagg - fix picking correct interface names issue (https://github.com/ansible/ansible/pull/42557)
+
+- get_capabilities in nxapi module_utils should not return empty dictionary (https://github.com/ansible/ansible/pull/42688).
+
+- Enforcing NXAPI default HTTP behavior (https://github.com/ansible/ansible/pull/41817).
+
+- pause - do not set stdout to raw mode when redirecting to a file (https://github.com/ansible/ansible/issues/41717)
+
+- pause - nest try except when importing curses to gracefully fail if curses is not present (https://github.com/ansible/ansible/issues/42004)
+
+
 .. _Ansible 2.5 "Kashmir" Release Notes_v2.5.6:
 
 v2.5.6
