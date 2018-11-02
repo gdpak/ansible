@@ -162,6 +162,7 @@ class ActionModule(ActionBase):
             with open(source_file, 'r') as f:
                 old_content = f.read()
         except (IOError, OSError) as ioexc:
+            os.remove(source_file)
             raise IOError(ioexc)
 
         sha1 = hashlib.sha1()
